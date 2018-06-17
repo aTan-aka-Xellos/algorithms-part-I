@@ -8,9 +8,8 @@ public class Percolation {
     private final int dimension;
 
     private int numberOfOpenSites = 0;
-    private boolean[][] states;
-
-    private WeightedQuickUnionUF quickUnion;
+    private final boolean[][] states;
+    private final WeightedQuickUnionUF quickUnion;
 
     /**
      * create n-by-n grid, with all sites blocked.
@@ -36,7 +35,7 @@ public class Percolation {
             return;
         }
 
-        states [row][col] = true;
+        states[row][col] = true;
         unionNeighbors(row, col);
         numberOfOpenSites++;
     }
@@ -104,7 +103,6 @@ public class Percolation {
         return numberOfOpenSites;
     }
 
-
     private void unionNeighbors(int row, int col) {
         int[][] neighbors;
 
@@ -123,7 +121,8 @@ public class Percolation {
 
     private int[][] getNeighbors(int row, int col) {
         validatePrescribedInput(row, col);
-        int[][] neighbors = new int[4][2];
+        int numberOfNeighbors = 4;
+        int[][] neighbors = new int[numberOfNeighbors][2];
 
         neighbors[0] = getLeftNeighbor(row, col);
         neighbors[1] = getRightNeighbor(row, col);
@@ -170,13 +169,13 @@ public class Percolation {
         }
     }
 
-    private static void validatePrescribedInput(int row, int col ) {
-        if (row <= 0 || col <= 0) {
+    private void validatePrescribedInput(int row, int col) {
+        if (row <= 0 || row > dimension || col <= 0 || col > dimension) {
             throw new IllegalArgumentException("row: " + row + " col: " + col);
         }
     }
 
-    private static void validateDimension(int dimension) {
+    private void validateDimension(int dimension) {
         if (dimension <= 0) {
             throw new IllegalArgumentException();
         }

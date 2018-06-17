@@ -1,5 +1,5 @@
-import static edu.princeton.cs.algs4.StdIn.readAllInts;
-
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
@@ -7,9 +7,12 @@ public class PercolationStats {
 
     private final double[] threshold;
     private final int trials;
+    private static final double INTERVAL_COEFFICIENT = 1.96;
 
+    private double mean;
+    private double stddev;
     /**
-     * perform trials independent experiments on an n-by-n grid
+     * perform trials independent experiments on an n-by-n grid.
      * @param dimension dimension
      * @param trials trials
      */
@@ -23,7 +26,7 @@ public class PercolationStats {
 
             Percolation percolation = new Percolation(dimension);
 
-            while(!percolation.percolates()) {
+            while (!percolation.percolates()) {
                 int row = StdRandom.uniform(dimension + 1);
                 int col = StdRandom.uniform(dimension + 1);
 
@@ -32,7 +35,7 @@ public class PercolationStats {
                 percolation.open(row, col);
             }
 
-            threshold[i] = (double)percolation.numberOfOpenSites()
+            threshold[i] = (double) percolation.numberOfOpenSites()
                     / (dimension * dimension);
         }
     }
@@ -42,15 +45,21 @@ public class PercolationStats {
      * @return mean
      */
     public double mean() {
-        return StdStats.mean(threshold);
+        if (mean == 0.0) {
+            mean = StdStats.mean(threshold);
+        }
+        return mean;
     }
 
     /**
      * sample standard deviation of percolation threshold.
-     * @return stddev
+     * @return standard deviation
      */
     public double stddev() {
-        return StdStats.stddev(threshold);
+        if (stddev == 0.0) {
+            stddev = StdStats.stddev(threshold);
+        }
+        return stddev;
     }
 
     /**
@@ -58,7 +67,7 @@ public class PercolationStats {
      * @return confidenceLo
      */
     public double confidenceLo() {
-        return mean() - (1.96 * stddev()/Math.sqrt(trials));
+        return mean() - (INTERVAL_COEFFICIENT * stddev() / Math.sqrt(trials));
     }
 
     /**
@@ -66,19 +75,18 @@ public class PercolationStats {
      * @return confidenceHi
      */
     public double confidenceHi() {
-        return mean() + (1.96 * stddev()/Math.sqrt(trials));
+        return mean() + (INTERVAL_COEFFICIENT * stddev() / Math.sqrt(trials));
     }
 
-    public static void main(String[] args) {
-
-        int[] value = readAllInts();
-        PercolationStats pStats = new PercolationStats(value[0], value[1]);
-    }
-
-    private static void validatePercolationStats(int n, int trials ) {
+    private static void validatePercolationStats(int n, int trials) {
         if (n <= 0 || trials <= 0) {
             throw new IllegalArgumentException("n: " + n
                     + " trials: " + trials);
         }
+    }
+
+    public static void main(String[] args) {
+        int[] value = StdIn.readAllInts();
+        StdOut.print(value);
     }
 }
