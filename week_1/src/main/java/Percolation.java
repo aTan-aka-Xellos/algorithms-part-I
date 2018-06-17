@@ -19,15 +19,25 @@ public class Percolation {
 
         dimension  = n;
         totalSites = n * n;
-        quickUnion = new WeightedQuickUnionUF(totalSites);
 
         states = new boolean[n + 1][n + 1];
 
         for (int i = 1; i < states.length; i++) {
             for (int j = 1; j < states.length ; j++) {
                 if (uniform(2) == 1) {
-                    open(i, j);
+                    states [i][j] = true;
+                    numberOfOpenSites++;
                 }
+            }
+        }
+        quickUnion = new WeightedQuickUnionUF(numberOfOpenSites);
+
+        print(this);
+        
+        // 2 * N^2 - too slow
+        for (int i = 1; i < states.length; i++) {
+            for (int j = 1; j < states.length; j++) {
+                unionNeighbors(i, j);
             }
         }
     }
@@ -127,24 +137,24 @@ public class Percolation {
     }
 
     private static void test_neighbors() {
-//        int dimension = 10;
-//        Percolation p = new Percolation(dimension);
-//        assert p.getLeftNeighborIndex(0, 0) == -1;
-//        assert p.getLeftNeighborIndex(1, 0) == -1;
-//
-//        assert p.getRightNeighborIndex(dimension, dimension) == -1;
-//        assert p.getRightNeighborIndex(0, dimension) == -1;
-//
-//        assert p.getBottomNeighborIndex(0, 0) == -1;
-//        assert p.getBottomNeighborIndex(0, dimension) == -1;
-//
-//        assert p.getTopNeighborIndex(dimension, dimension) == -1;
-//        assert p.getTopNeighborIndex(dimension, 0) == -1;
-//
-//        assert p.getLeftNeighborIndex(5, 5)   == 54;
-//        assert p.getRightNeighborIndex(5, 5)  == 56;
-//        assert p.getBottomNeighborIndex(5, 5) == 45;
-//        assert p.getTopNeighborIndex(5, 5)    == 65;
+        int dimension = 10;
+        Percolation p = new Percolation(dimension);
+        assert p.getLeftNeighbor(1, 1).length == 0;
+        assert p.getLeftNeighbor(2, 0).length == 0;
+
+        assert p.getRightNeighbor(dimension, dimension).length == 0;
+        assert p.getRightNeighbor(0, dimension).length == 0;
+
+        assert p.getBottomNeighbor(0, 0).length == 0;
+        assert p.getBottomNeighbor(0, dimension).length == 0;
+
+        assert p.getTopNeighbor(dimension, dimension).length == 0;
+        assert p.getTopNeighbor(dimension, 0).length == 0;
+
+        assert p.getLeftNeighbor(5, 5)   == new int[]{5, 4};
+        assert p.getRightNeighbor(5, 5)  == new int[]{5, 6};
+        assert p.getBottomNeighbor(5, 5) == new int[]{4, 5};
+        assert p.getTopNeighbor(5, 5)    == new int[]{4, 5};
 
     }
 
