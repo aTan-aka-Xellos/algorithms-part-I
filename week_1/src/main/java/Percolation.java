@@ -109,9 +109,7 @@ public class Percolation {
         neighbors = getNeighbors(row, col);
         for (int[] neighbor : neighbors) {
             if (neighbor.length > 0
-                    && isOpen(neighbor[0], neighbor[1])
-                    && !quickUnion.connected(xyTo1D(row, col),
-                        xyTo1D(neighbor[0], neighbor[1]))) {
+                    && isOpen(neighbor[0], neighbor[1])) {
 
                 quickUnion.union(xyTo1D(row, col),
                         xyTo1D(neighbor[0], neighbor[1]));
