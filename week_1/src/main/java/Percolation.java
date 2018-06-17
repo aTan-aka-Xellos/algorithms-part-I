@@ -21,21 +21,15 @@ public class Percolation {
         totalSites = n * n;
         quickUnion = new WeightedQuickUnionUF(totalSites);
 
-        states = new boolean[n][n];
+        states = new boolean[n + 1][n + 1];
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n ; j++) {
+        for (int i = 1; i < states.length; i++) {
+            for (int j = 1; j < states.length ; j++) {
                 if (uniform(2) == 1) {
-                    states[i][j] = true;
-                    numberOfOpenSites++;
-
-//                    unionToNeighborsIfOpen(i, j);
-                } else {
-                    states[i][j] = false;
+                    open(i, j);
                 }
             }
         }
-        System.out.println("");
     }
 
 
@@ -45,37 +39,31 @@ public class Percolation {
 
         if (isOpen(row, col)) return;
 
-        states [row - 1][col - 1] = true;
+        states [row][col] = true;
+//        unionToNeighborsIfOpen(row, col);
         numberOfOpenSites++;
-
-        unionToNeighborsIfOpen(row - 1, col - 1);
     }
 
     // is site (row, col) open?
     public boolean isOpen(int row, int col) {
         validatePrescribedInput(row, col);
 
-        StdOut.println("isOpen row: " + row + " col: " + col);
-        if (row >= 10 || col >= 10) {
-            StdOut.println("Fail isOpen row: " + row + " col: " + col);
-        }
-        return states[row - 1][col - 1];
+        return states[row][col];
     }
 
-//    // is site (row, col) full?
+    // is site (row, col) full?
     public boolean isFull(int row, int col) {
         validatePrescribedInput(row, col);
 
-//        quickUnion.
         return false;
     }
 
-//    // number of open sites
+    // number of open sites
     public int numberOfOpenSites() {
         return numberOfOpenSites;
     }
 
-//    // does the system percolate?
+    // does the system percolate?
     public boolean percolates() {
         return false;
     }
@@ -85,12 +73,12 @@ public class Percolation {
         int dimension = 10;
 
         test_xyTo1D();
-        test_neighbors();
+//        test_neighbors();
 
         Percolation p = new Percolation(dimension);
 
-        StdOut.print("Open sites: " + p.numberOfOpenSites());
-        StdOut.print("QuickUnion count: " + p.quickUnion.count());
+        StdOut.println("Initiated open sites: " + p.numberOfOpenSites());
+        StdOut.println("QuickUnion count: " + p.quickUnion.count());
         PercolationVisualizer.draw(p, dimension);
     }
 
@@ -114,7 +102,16 @@ public class Percolation {
 
     // map from a 2-dimensional (row, column) pair to a 1-dimensional union find object index
     private static int xyTo1D(int row, int col) {
-        return row * 10 + col;
+        validatePrescribedInput(row, col);
+        return (row - 1) * 10 + col - 1;
+    }
+
+    private static void test_xyTo1D() {
+        assert xyTo1D(1, 1) == 0;
+        assert xyTo1D(1, 5) == 4;
+        assert xyTo1D(2, 8) == 17;
+        assert xyTo1D(9, 1) == 80;
+        assert xyTo1D(10, 10) == 99;
     }
 
     private int getLeftNeighborIndex(int row, int col) {
@@ -177,13 +174,7 @@ public class Percolation {
 
 
 
-    private static void test_xyTo1D() {
-        assert xyTo1D(0, 0) == 0;
-        assert xyTo1D(0, 5) == 5;
-        assert xyTo1D(2, 8) == 28;
-        assert xyTo1D(9, 0) == 90;
-        assert xyTo1D(10, 10) == 110;
-    }
+
 
 
     private static void validatePrescribedInput(int row, int col ) {
