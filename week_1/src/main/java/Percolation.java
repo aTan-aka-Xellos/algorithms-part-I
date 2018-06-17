@@ -40,7 +40,7 @@ public class Percolation {
         if (isOpen(row, col)) return;
 
         states [row][col] = true;
-//        unionToNeighborsIfOpen(row, col);
+        unionNeighbors(row, col);
         numberOfOpenSites++;
     }
 
@@ -83,22 +83,71 @@ public class Percolation {
     }
 
 
-    private void unionToNeighborsIfOpen(int row, int col) {
-        int left   = getLeftNeighborIndex  (row, col);
-        int right  = getRightNeighborIndex (row, col);
-        int bottom = getBottomNeighborIndex(row, col);
-        int top    = getTopNeighborIndex   (row, col);
+    private void unionNeighbors(int row, int col) {
+        int[][] neighbors;
 
-        int index = xyTo1D(row, col);
-        unionNeighbor(left,   index);
-        unionNeighbor(right,  index);
-        unionNeighbor(bottom, index);
-        unionNeighbor(top,    index);
+        neighbors = getNeighbors(row, col);
+        for (int[] neighbor : neighbors) {
+            if (neighbor.length > 0 && isOpen(neighbor[0], neighbor[1])) {
+                quickUnion.union(xyTo1D(row, col), xyTo1D(neighbor[0], neighbor[1]));
+            }
+        }
     }
 
-    private void unionNeighbor(int neighbor, int index) {
-        if (index > -1 && neighbor > -1) quickUnion.union(neighbor, index);
+    private int[][] getNeighbors(int row, int col) {
+        validatePrescribedInput(row, col);
+        int[][] neighbors = new int[4][2];
+
+        neighbors[0] = getLeftNeighbor  (row, col);
+        neighbors[1] = getRightNeighbor (row, col);
+        neighbors[2] = getBottomNeighbor(row, col);
+        neighbors[3] = getTopNeighbor   (row, col);
+
+        return neighbors;
     }
+
+    private int[] getLeftNeighbor(int row, int col) {
+        if (col > 1) return new int[]{row, col - 1};
+        else         return new int[]{};
+    }
+
+    private int[] getRightNeighbor(int row, int col) {
+        if (col < dimension) return new int[]{row, col + 1};
+        else                 return new int[]{};
+    }
+
+    private int[] getBottomNeighbor(int row, int col) {
+        if (row > 1) return new int[]{row - 1, col};
+        else         return new int[]{};
+    }
+
+    private int[] getTopNeighbor(int row, int col) {
+        if (row < dimension) return new int[]{row + 1, col};
+        else                 return new int[]{};
+    }
+
+    private static void test_neighbors() {
+//        int dimension = 10;
+//        Percolation p = new Percolation(dimension);
+//        assert p.getLeftNeighborIndex(0, 0) == -1;
+//        assert p.getLeftNeighborIndex(1, 0) == -1;
+//
+//        assert p.getRightNeighborIndex(dimension, dimension) == -1;
+//        assert p.getRightNeighborIndex(0, dimension) == -1;
+//
+//        assert p.getBottomNeighborIndex(0, 0) == -1;
+//        assert p.getBottomNeighborIndex(0, dimension) == -1;
+//
+//        assert p.getTopNeighborIndex(dimension, dimension) == -1;
+//        assert p.getTopNeighborIndex(dimension, 0) == -1;
+//
+//        assert p.getLeftNeighborIndex(5, 5)   == 54;
+//        assert p.getRightNeighborIndex(5, 5)  == 56;
+//        assert p.getBottomNeighborIndex(5, 5) == 45;
+//        assert p.getTopNeighborIndex(5, 5)    == 65;
+
+    }
+
 
     // map from a 2-dimensional (row, column) pair to a 1-dimensional union find object index
     private static int xyTo1D(int row, int col) {
@@ -114,72 +163,10 @@ public class Percolation {
         assert xyTo1D(10, 10) == 99;
     }
 
-    private int getLeftNeighborIndex(int row, int col) {
-        if (col > 0 && isOpen(row + 1, col - 1 + 1)) {
-            return xyTo1D(row, col - 1);
-        }
-        else
-            return -1;
-    }
-
-    private int getRightNeighborIndex(int row, int col) {
-        if (col < dimension && isOpen(row + 1, col + 1 + 1)) {
-            return xyTo1D(row, col + 1);
-
-        }
-        else
-            return -1;
-    }
-
-    private int getBottomNeighborIndex(int row, int col) {
-        if (row > 0 && isOpen(row - 1 + 1, col + 1)) {
-            return xyTo1D(row - 1, col);
-        }
-        else
-            return -1;
-    }
-
-    private int getTopNeighborIndex(int row, int col) {
-        if (row < dimension && isOpen(row + 1 + 1, col + 1)) {
-            return xyTo1D(row + 1, col);
-        }
-        else
-            return -1;
-    }
-
-    private static void test_neighbors() {
-        int dimension = 10;
-        Percolation p = new Percolation(dimension);
-        assert p.getLeftNeighborIndex(0, 0) == -1;
-        assert p.getLeftNeighborIndex(1, 0) == -1;
-
-        assert p.getRightNeighborIndex(dimension, dimension) == -1;
-        assert p.getRightNeighborIndex(0, dimension) == -1;
-
-        assert p.getBottomNeighborIndex(0, 0) == -1;
-        assert p.getBottomNeighborIndex(0, dimension) == -1;
-
-        assert p.getTopNeighborIndex(dimension, dimension) == -1;
-        assert p.getTopNeighborIndex(dimension, 0) == -1;
-
-        assert p.getLeftNeighborIndex(5, 5)   == 54;
-        assert p.getRightNeighborIndex(5, 5)  == 56;
-        assert p.getBottomNeighborIndex(5, 5) == 45;
-        assert p.getTopNeighborIndex(5, 5)    == 65;
-
-
-
-
-    }
-
-
-
-
-
 
     private static void validatePrescribedInput(int row, int col ) {
         if (row <= 0 || col <= 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("row: " + row + " col: " + col);
         }
     }
 
