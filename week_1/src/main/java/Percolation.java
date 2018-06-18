@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /**
@@ -8,7 +9,7 @@ public class Percolation {
     private final int dimension;
 
     private int numberOfOpenSites = 0;
-    private final boolean[][] states;
+    private final byte[][] states;
     private final WeightedQuickUnionUF quickUnion;
 
     /**
@@ -19,7 +20,7 @@ public class Percolation {
         validateDimension(n);
 
         dimension = n;
-        states = new boolean[n + 1][n + 1];
+        states = new byte[n + 1][n + 1];
         quickUnion = new WeightedQuickUnionUF(n * n);
     }
 
@@ -35,7 +36,12 @@ public class Percolation {
             return;
         }
 
-        states[row][col] = true;
+        states[row][col] = 1;
+
+        if (row == 1) {
+            setTagFull(row, col);
+        }
+
         unionNeighbors(row, col);
         numberOfOpenSites++;
     }
@@ -49,7 +55,7 @@ public class Percolation {
     public boolean isOpen(int row, int col) {
         validatePrescribedInput(row, col);
 
-        return states[row][col];
+        return states[row][col] > 0;
     }
 
     /**
@@ -65,16 +71,19 @@ public class Percolation {
             return false;
         }
 
-        for (int topCol = 1; topCol <= dimension; topCol++) {
-            if (!isOpen(1, topCol)) {
-                continue;
-            }
-
-            if (quickUnion.connected(xyTo1D(row, col), xyTo1D(1, topCol))) {
-                return true;
-            }
+        if (isTagFull(row, col)) {
+            return true;
         }
+
         return false;
+    }
+
+    private void setTagFull(int row, int col) {
+        states[row][col] = 2;
+    }
+
+    private boolean isTagFull(int row, int col) {
+        return states[row][col] == 2;
     }
 
     /**
@@ -96,7 +105,7 @@ public class Percolation {
     }
 
     /**
-     * number of open sites.
+     * Number of open sites.
      * @return number of open sites
      */
     public int numberOfOpenSites() {
@@ -106,13 +115,34 @@ public class Percolation {
     private void unionNeighbors(int row, int col) {
         int[][] neighbors;
 
+        if (isTagFull(row, col)) {
+            updateNeighbors(row, col);
+        }
+
         neighbors = getNeighbors(row, col);
         for (int[] neighbor : neighbors) {
-            if (neighbor.length > 0
-                    && isOpen(neighbor[0], neighbor[1])) {
+            if (neighbor.length > 0 && isOpen(neighbor[0], neighbor[1])) {
+
+                if (!isTagFull(row, col) && isTagFull(neighbor[0], neighbor[1])) {
+                    setTagFull(row, col);
+                    updateNeighbors(row, col);
+                }
 
                 quickUnion.union(xyTo1D(row, col),
                         xyTo1D(neighbor[0], neighbor[1]));
+            }
+        }
+    }
+
+    private void updateNeighbors(int row, int col) {
+        int[][] neighbors;
+        neighbors = getNeighbors(row, col);
+
+        for (int[] neighbor : neighbors) {
+            if (neighbor.length > 0 && isOpen(neighbor[0], neighbor[1])
+                    && !isTagFull(neighbor[0], neighbor[1])) {
+                setTagFull(neighbor[0], neighbor[1]);
+                updateNeighbors(neighbor[0], neighbor[1]);
             }
         }
     }

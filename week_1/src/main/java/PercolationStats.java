@@ -31,7 +31,9 @@ public class PercolationStats {
                 int col = StdRandom.uniform(dimension + 1);
 
                 // generated invalid values
-                if (row == 0 || col == 0) continue;
+                if (row == 0 || col == 0 || percolation.isOpen(row, col)) {
+                    continue;
+                }
                 percolation.open(row, col);
             }
 
