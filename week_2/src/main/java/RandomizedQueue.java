@@ -3,7 +3,9 @@ import java.util.Iterator;
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // construct an empty randomized queue
-    public RandomizedQueue() {}
+    public RandomizedQueue() {
+
+    }
 
 
     // is the randomized queue empty?
@@ -18,7 +20,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // add the item
     public void enqueue(Item item) {
-
+        if (item == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     // remove and return a random item
@@ -39,5 +43,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     // unit testing (optional)
-    public static void main(String[] args) {}
+    public static void main(String[] args) {
+
+    }
 }

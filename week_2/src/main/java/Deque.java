@@ -1,44 +1,149 @@
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
 
-    // construct an empty deque
-    public Deque() {}
+    private Node first;
+    private Node last;
+    private int size = 0;
 
+    private class Node {
+
+        Item item;
+        Node next;
+        Node prev;
+
+        Node(Item item) {
+            this.item = item;
+        }
+    }
+
+    // construct an empty deque
+    public Deque() {
+
+    }
+
+    // unit testing (optional)
+    public static void main(String[] args) {
+
+    }
 
     // is the deque empty?
     public boolean isEmpty() {
-        return true;
+        return size == 0;
     }
 
     // return the number of items on the deque
     public int size() {
-        return 0;
+        return size;
     }
 
     // add the item to the front
-    public void addFirst(Item item) {}
+    public void addFirst(Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if (isEmpty()) {
+            first = new Node(item);
+            last  = first;
+        } else {
+            Node node = new Node(item);
+            node.next = first;
+            first.prev = node;
+            first = node;
+        }
+
+        size++;
+    }
 
     // add the item to the end
-    public void addLast(Item item) {}
+    public void addLast(Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if (isEmpty()) {
+            last  = new Node(item);
+            first = last;
+        } else {
+            Node node = new Node(item);
+            node.prev = last;
+            last.next = node;
+            last = node;
+        }
+
+        size++;
+    }
 
     // remove and return the item from the front
     public Item removeFirst() {
-        return null;
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        Item item = first.item;
+
+        if (size() == 1) {
+            first.item = null;
+        } else {
+            first = first.next;
+            first.prev = null;
+        }
+        size--;
+
+        return item;
     }
 
     // remove and return the item from the end
     public Item removeLast() {
-        return null;
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        Item item = last.item;
+
+        if (size() == 1) {
+            last.item = null;
+        } else {
+            last = last.prev;
+            last.next = null;
+        }
+        size--;
+
+        return item;
     }
-
-
 
     // return an iterator over items in order from front to end
     public Iterator<Item> iterator() {
-        return null;
+        return new ListIterator();
     }
 
-    // unit testing (optional)
-    public static void main(String[] args) {}
+    private class ListIterator implements Iterator<Item> {
+
+        private Node currentNode = isEmpty() ? null : first;
+
+        @Override
+        public boolean hasNext() {
+            return currentNode != null;
+        }
+
+        @Override
+        public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            Item item = currentNode.item;
+            currentNode = currentNode.next;
+            return item;
+        }
+    }
 }
+
+
+
+
+

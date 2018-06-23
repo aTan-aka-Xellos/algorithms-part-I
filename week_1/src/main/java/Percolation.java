@@ -70,11 +70,8 @@ public class Percolation {
             return false;
         }
 
-        if (isTagFull(row, col)) {
-            return true;
-        }
+        return isTagFull(row, col);
 
-        return false;
     }
 
     private void setTagFull(int row, int col) {
