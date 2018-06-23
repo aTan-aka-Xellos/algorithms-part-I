@@ -44,6 +44,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // unit testing (optional)
     public static void main(String[] args) {
-
+        RandomizedQueue<String> rQueue = new RandomizedQueue<>();
+        rQueue.enqueue("zzz");
     }
 }

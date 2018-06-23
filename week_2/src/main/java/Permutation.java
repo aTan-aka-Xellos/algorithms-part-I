@@ -4,7 +4,7 @@ public class Permutation {
 
     public static void main(String[] args) {
 
-        int k = StdIn.readInt();
+        int k = Integer.parseInt(StdIn.readString());
 //        StdIn.readString();
 
         Deque<String> deque = new Deque<>();

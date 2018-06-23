@@ -1,5 +1,3 @@
-import edu.princeton.cs.algs4.StdOut;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -27,7 +25,9 @@ public class Deque<Item> implements Iterable<Item> {
 
     // unit testing (optional)
     public static void main(String[] args) {
-
+        Deque<String> deque = new Deque<>();
+        deque.addFirst("zzz");
+        deque.removeFirst();
     }
 
     // is the deque empty?
