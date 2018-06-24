@@ -16,7 +16,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // is the randomized queue empty?
     public boolean isEmpty() {
-        return numberOfItems == 0;
+        return size() == 0;
     }
 
     // return the number of items on the randomized queue
@@ -39,7 +39,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
 
         if (items.length == numberOfItems) {
-            resize(numberOfItems * 3 / 2 + 1);
+            resize(numberOfItems * 2);
         }
 
         int indexToPut = StdRandom.uniform(numberOfItems + 1);
@@ -55,13 +55,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException();
         }
 
-        Item item = items[numberOfItems - 1];
+        int indexToGet = StdRandom.uniform(numberOfItems);
+        Item item = items[indexToGet];
+        items[indexToGet] = items[numberOfItems - 1];
         items[numberOfItems - 1] = null;
         numberOfItems--;
 
-        if (numberOfItems > 0
-            && (numberOfItems * 2 < items.length || items.length - numberOfItems >= 55)) {
-            resize(numberOfItems);
+        if (numberOfItems > 0 && numberOfItems == items.length / 4) {
+            resize(items.length / 2);
         }
         return item;
     }
