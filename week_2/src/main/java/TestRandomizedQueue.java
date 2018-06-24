@@ -1,8 +1,25 @@
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.Iterator;
 
 public class TestRandomizedQueue {
 
     public static void main(String[] args) {
+
+        RandomizedQueue<Integer> rQueue = new RandomizedQueue<>();
+
+        rQueue.enqueue(0);
+
+        for (int i = 0; i < 100000; i++) {
+            boolean bool = StdRandom.uniform(2) == 0;
+            if (bool && !rQueue.isEmpty()) {
+                rQueue.dequeue();
+            } else {
+                rQueue.enqueue(i);
+            }
+        }
+
+        System.out.println(rQueue.size());
 
         testSingle();
         testMany();
