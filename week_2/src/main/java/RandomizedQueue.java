@@ -42,10 +42,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             resize(numberOfItems * 2);
         }
 
-        int indexToPut = StdRandom.uniform(numberOfItems + 1);
-        items[numberOfItems] = items[indexToPut];
-        items[indexToPut] = item;
-
+        items[numberOfItems] = item;
         numberOfItems++;
     }
 
