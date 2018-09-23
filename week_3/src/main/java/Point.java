@@ -1,3 +1,6 @@
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.POSITIVE_INFINITY;
+
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 
@@ -59,7 +62,15 @@ public class Point implements Comparable<Point> {
      * @return the slope between this point and the specified point
      */
     public double slopeTo(Point that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+
+        double dy = that.y - this.y;
+        double dx = that.x - this.x;
+
+        if (dy == 0.0 && dx == 0.0) return NEGATIVE_INFINITY;
+        if (dx == 0.0) return POSITIVE_INFINITY;
+        if (dy == 0.0) return 0.0;
+
+        return dy / dx;
     }
 
     /**
@@ -75,7 +86,10 @@ public class Point implements Comparable<Point> {
      *         argument point
      */
     public int compareTo(Point that) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (this.y > that.y) return 1;
+        if (this.y < that.y) return -1;
+
+        return Integer.compare(this.x, that.x);
     }
 
     /**
@@ -85,9 +99,19 @@ public class Point implements Comparable<Point> {
      * @return the Comparator that defines this ordering on points
      */
     public Comparator<Point> slopeOrder() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new SlopeOrderComparator();
     }
 
+    private class SlopeOrderComparator implements Comparator<Point> {
+
+        @Override
+        public int compare(Point o1, Point o2) {
+            double slope1 = slopeTo(o1);
+            double slope2 = slopeTo(o2);
+
+            return Double.compare(slope1, slope2);
+        }
+    }
 
     /**
      * Returns a string representation of this point.
@@ -105,6 +129,94 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        /* YOUR CODE HERE */
+
+        testSlopeTo();
+        testCompareTo();
+        testSlopeOrder();
     }
+
+    private static void testSlopeOrder() {
+        Point p0 = new Point(10, 10);
+
+        assert p0.slopeOrder().compare(new Point(20, 20), new Point(50, 50)) == 0;
+        assert p0.slopeOrder().compare(new Point(50, 50), new Point(20, 20)) == 0;
+        assert p0.slopeOrder().compare(new Point(20, 20), new Point(30, 15)) > 0;
+        assert p0.slopeOrder().compare(new Point(20, 20), new Point(30, 15)) > 0;
+        assert p0.slopeOrder().compare(new Point(20, 20), new Point(30, 50)) < 0;
+        assert p0.slopeOrder().compare(new Point(20, 20), new Point(0, 10)) > 0;
+    }
+
+    private static void testCompareTo() {
+        Point p0 = new Point(10, 10);
+        Point p1 = new Point(10, 10);
+        assert p0.compareTo(p1) == 0;
+
+        p0 = new Point(10, 20);
+        p1 = new Point(10, 10);
+        assert p0.compareTo(p1) > 0;
+
+        p0 = new Point(10, 10);
+        p1 = new Point(10, 20);
+        assert p0.compareTo(p1) < 0;
+
+        p0 = new Point(20, 10);
+        p1 = new Point(10, 10);
+        assert p0.compareTo(p1) > 0;
+
+        p0 = new Point(10, 10);
+        p1 = new Point(20, 10);
+        assert p0.compareTo(p1) < 0;
+    }
+
+    private static void testSlopeTo() {
+
+        Point p0 = new Point(10, 10);
+        Point p1 = new Point(20, 10);
+        assert p0.slopeTo(p1) == +0.0;
+
+        p0 = new Point(10, 10);
+        p1 = new Point(10, 20);
+        assert p0.slopeTo(p1) == POSITIVE_INFINITY;
+
+        p0 = new Point(10, 10);
+        p1 = new Point(10, 10);
+        assert p0.slopeTo(p1) == NEGATIVE_INFINITY;
+
+        p0 = new Point(10, 10);
+        p1 = new Point(20, 20);
+        assert p0.slopeTo(p1) == 1.0;
+
+        p0 = new Point(10, 10);
+        p1 = new Point(20, 110);
+        assert p0.slopeTo(p1) == 10.0;
+
+        p0 = new Point(20, 110);
+        p1 = new Point(10, 10);
+        assert p0.slopeTo(p1) == 10.0;
+
+        p0 = new Point(10, 110);
+        p1 = new Point(20, 10);
+        assert p0.slopeTo(p1) == -10.0;
+
+        p0 = new Point(110, 10);
+        p1 = new Point(10, 20);
+        assert p0.slopeTo(p1) == -0.1;
+
+        p0 = new Point(10, 0);
+        p1 = new Point(0, 32_767);
+        assert p0.slopeTo(p1) == -3276.7;
+
+        p0 = new Point(0, 0);
+        p1 = new Point(10, 32_767);
+        assert p0.slopeTo(p1) == 3276.7;
+
+        p0 = new Point(0, 0);
+        p1 = new Point(32_767, 10);
+        assert p0.slopeTo(p1) == 3.051850947599719E-4;
+
+        p0 = new Point(32_767, 0);
+        p1 = new Point(0, 10);
+        assert p0.slopeTo(p1) == -3.051850947599719E-4;
+    }
+
 }
