@@ -1,10 +1,8 @@
 # Algorithms-part-I
 
 
-## Week 1
+## Programming Assignment 1: Percolation
 
-Percolation
+## PProgramming Assignment 2: Deques and Randomized Queues
 
-## Week 2
-
-Permutation
+## Programming Assignment 3: Pattern Recognition
