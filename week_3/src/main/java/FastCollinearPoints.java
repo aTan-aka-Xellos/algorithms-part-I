@@ -11,37 +11,49 @@ public class FastCollinearPoints {
         Arrays.sort(points);
 
         int size = points.length;
-        LineSegment[] lineSegments = new LineSegment[size];
+        LineSegment[] lineSegments = new LineSegment[size * size];
+
+        Point prevBasePoint = new Point(1, 100_000);
 
         for (int i = 0; i < size - 3; i++) {
-            int slope_count = 0;
+            int slopeCount = 0;
 
             Point[] subPoints = Arrays.copyOfRange(points, i + 1, size);
             Arrays.sort(subPoints, points[i].slopeOrder());
             double[] slopes = new double[subPoints.length];
 
-            for (int j = 0; j < subPoints.length; j++) {
-                slopes[slope_count++] = points[i].slopeTo(subPoints[j]);
+            for (Point subPoint : subPoints) {
+                if (points[i].compareTo(subPoint) == 0) throw new IllegalArgumentException();
+                slopes[slopeCount++] = points[i].slopeTo(subPoint);
             }
 
             int count = 1;
             for (int j = 0; j < slopes.length - 1; j++) {
-                if (slopes[j] == slopes[j + 1]) {
+                if (Double.compare(slopes[j], slopes[j + 1]) == 0) {
                     count++;
-                }
-
-                if (slopes[j] != slopes[j + 1] && count < 3) {
+                } else if (count < 3) {
                     count = 1;
-                }
+                } else {
+                    if (prevBasePoint == points[i]
+                        || Double.compare(prevBasePoint.slopeTo(subPoints[j]),
+                        points[i].slopeTo(subPoints[j])) != 0) {
 
-                if (count >= 3 && (slopes[j] != slopes[j + 1] || j == slopes.length - 2)) {
-
-                    if (slopes[j] != slopes[j + 1]) {
                         lineSegments[numberOfSegments++] = new LineSegment(points[i], subPoints[j]);
-                    } else if (j == slopes.length - 2) {
-                        lineSegments[numberOfSegments++] = new LineSegment(points[i], subPoints[j + 1]);
+                        prevBasePoint = points[i];
+
                     }
                     count = 1;
+                }
+            }
+
+            if (count >= 3) {
+                if (prevBasePoint == points[i]
+                    || Double.compare(prevBasePoint.slopeTo(subPoints[slopes.length - 1]),
+                    points[i].slopeTo(subPoints[slopes.length - 1])) != 0) {
+
+                    lineSegments[numberOfSegments++] = new LineSegment(points[i], subPoints[slopes.length - 1]);
+                    prevBasePoint = points[i];
+
                 }
             }
         }
