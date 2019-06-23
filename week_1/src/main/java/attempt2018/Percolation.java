@@ -4,7 +4,11 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /**
  * Percolation class.
- * First attempt to solve the problem. Use recursion instead of tree structure.
+ * The first attempt to solve the problem. Use recursion instead of tree structure.
+ *
+ * THIS IS PURE PIECE OF SHIT!!!
+ *
+ * Close it and never open ever again.
  */
 public class Percolation {
 

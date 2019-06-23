@@ -5,9 +5,10 @@ import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
 
+    private static final double INTERVAL_COEFFICIENT = 1.96;
+
     private final double[] threshold;
     private final int trials;
-    private static final double INTERVAL_COEFFICIENT = 1.96;
 
     private double mean;
     private double stddev;
@@ -88,7 +89,13 @@ public class PercolationStats {
     }
 
     public static void main(String[] args) {
-        int[] value = StdIn.readAllInts();
-        StdOut.print(value);
+        int n = Integer.parseInt(StdIn.readString());
+        int t = Integer.parseInt(StdIn.readString());
+
+        PercolationStats ps = new PercolationStats(n, t);
+
+        StdOut.println("mean:                    " + ps.mean());
+        StdOut.println("stddev:                  " + ps.stddev());
+        StdOut.println("95% confidence interval: " + ps.confidenceLo() + ps.confidenceHi());
     }
 }
